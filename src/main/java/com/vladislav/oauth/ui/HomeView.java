@@ -3,6 +3,7 @@ package com.vladislav.oauth.ui;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -26,6 +27,8 @@ public class HomeView extends VerticalLayout {
 
   @PostConstruct
   public void init() {
+    add(new H1("Home"));
+
     // init ui components
     signIn = new Button("Sign In");
     signOut = new Button("Sign Out");
@@ -38,18 +41,18 @@ public class HomeView extends VerticalLayout {
     add(welcomeText);
 
     if (VaadinSessionWrapper.isAuth()) {
-      loggedHome();
+      logged();
     } else {
-      anonymousHome();
+      anonymous();
     }
   }
 
-  private void anonymousHome() {
+  private void anonymous() {
     welcomeText.setText("Welcome new user! This is a home page");
     add(signIn);
   }
 
-  private void loggedHome() {
+  private void logged() {
     final GoogleProfileResponse profile = googleClient.getProfile();
 
     final String message = String.format("Welcome %s! This is a home page", profile.getName());
