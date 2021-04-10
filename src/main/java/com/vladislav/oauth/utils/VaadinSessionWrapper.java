@@ -10,4 +10,8 @@ public class VaadinSessionWrapper {
   public static String getAccessToken() {
     return (String) VaadinSession.getCurrent().getSession().getAttribute("accessToken");
   }
+
+  public static boolean isAuth() {
+    return getAccessToken() != null;
+  }
 }
