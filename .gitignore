@@ -265,3 +265,4 @@ gradle-app.setting
 **/build/
 
 # End of https://www.toptal.com/developers/gitignore/api/java,gradle,intellij+all,vaadin,node
+/client_secret_421243574159-aoaeno0dq8003a6cq24e6v72smtsc1qk.apps.googleusercontent.com.json
