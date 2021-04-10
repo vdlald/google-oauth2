@@ -63,10 +63,13 @@ public class GoogleClient {
     // execute request
     try {
       final Response response = client.newCall(request).execute();
-
       final String json = response.body().string();
 
-      return objectMapper.readValue(json, ExchangeTokenResponse.class);
+      if (response.isSuccessful()) {
+        return objectMapper.readValue(json, ExchangeTokenResponse.class);
+      } else {
+        throw new RuntimeException("Error exchange token: " + json);
+      }
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

@@ -28,17 +28,10 @@ public class LoginView extends VerticalLayout {
   private String clientId;
 
   private final GoogleClient googleClient;
-  private final String href = "https://accounts.google.com/o/oauth2/v2/auth"
-      + "?scope=https://www.googleapis.com/auth/userinfo.profile&"
-      + "access_type=offline&"
-      + "include_granted_scopes=true&"
-      + "response_type=code&"
-      + "redirect_uri=" + redirectUri + "&"
-      + "client_id=" + clientId;
-
 
   @PostConstruct
   public void init() {
+    // set style
     addClassName("login-view");
     setSizeFull();
     setAlignItems(Alignment.CENTER);
@@ -47,18 +40,27 @@ public class LoginView extends VerticalLayout {
     add(new H1("Sign in"));
 
     if (VaadinSessionWrapper.isAuth()) {
-      final Anchor signIn = new Anchor();
-      signIn.setText("Sign In via Google");
-      signIn.setHref(href);
-
-      add(signIn);
-    } else {
       final GoogleProfileResponse profile = googleClient.getProfile();
+
       add(new Div(new Text("You are already signed in as " + profile.getName())));
 
       final Button home = new Button("Return to the Home page");
       home.addClickListener(this::onHome);
       add(home);
+    } else {
+      final String href = "https://accounts.google.com/o/oauth2/v2/auth"
+          + "?scope=https://www.googleapis.com/auth/userinfo.profile&"
+          + "access_type=online&"
+          + "include_granted_scopes=true&"
+          + "response_type=code&"
+          + "redirect_uri=" + redirectUri + "&"
+          + "client_id=" + clientId;
+
+      final Anchor signIn = new Anchor();
+      signIn.setText("Sign In via Google");
+      signIn.setHref(href);
+
+      add(signIn);
     }
   }
 

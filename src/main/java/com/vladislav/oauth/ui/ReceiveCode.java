@@ -2,7 +2,6 @@ package com.vladislav.oauth.ui;
 
 import static com.vladislav.oauth.utils.UtilsMethods.splitQueryParams;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -12,15 +11,9 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.server.WrappedSession;
 import com.vladislav.oauth.components.googleclient.GoogleClient;
-import com.vladislav.oauth.models.GoogleAccount;
-import com.vladislav.oauth.models.GoogleToken;
-import com.vladislav.oauth.models.UserEntity;
 import com.vladislav.oauth.pojo.ExchangeTokenResponse;
-import com.vladislav.oauth.pojo.GoogleProfileResponse;
-import com.vladislav.oauth.services.UsersService;
 import java.net.URL;
 import java.util.Map;
-import java.util.Optional;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -33,8 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 public class ReceiveCode extends VerticalLayout {
 
   private final GoogleClient googleClient;
-  private final ObjectMapper objectMapper;
-  private final UsersService usersService;
 
   private Text text;
   private Button returnHome;
@@ -75,21 +66,6 @@ public class ReceiveCode extends VerticalLayout {
       session.setAttribute("accessToken", token.getAccessToken());
       session.setAttribute("tokenType", token.getTokenType());
       session.setAttribute("expiresIn", token.getExpiresIn());
-
-      final GoogleProfileResponse profile = googleClient.getProfile();
-      final GoogleToken googleToken = objectMapper.convertValue(token, GoogleToken.class);
-      final GoogleAccount googleAccount = objectMapper.convertValue(profile, GoogleAccount.class);
-      googleAccount.setToken(googleToken);
-
-      final UserEntity user;
-      final Optional<UserEntity> optional = usersService.findByGoogleAccountId(profile.getId());
-      if (optional.isPresent()) {
-        user = usersService.save(optional.get().setGoogleAccount(googleAccount));
-      } else {
-        user = usersService.save(new UserEntity().setGoogleAccount(googleAccount));
-      }
-
-      session.setAttribute("userId", user.getId());
 
       // navigate to home
       UI.getCurrent().navigate(HomeView.class);

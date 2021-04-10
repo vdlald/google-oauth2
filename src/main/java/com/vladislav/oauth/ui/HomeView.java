@@ -38,9 +38,9 @@ public class HomeView extends VerticalLayout {
     add(welcomeText);
 
     if (VaadinSessionWrapper.isAuth()) {
-      anonymousHome();
-    } else {
       loggedHome();
+    } else {
+      anonymousHome();
     }
   }
 
