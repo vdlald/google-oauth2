@@ -6,3 +6,9 @@ server:
     key-alias: tomcat
     key-password: password
   port: 8443
+spring:
+  profiles:
+    active: dev
+google:
+  client:
+    url: "https://www.googleapis.com/oauth2"

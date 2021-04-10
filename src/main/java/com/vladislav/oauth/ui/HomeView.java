@@ -1,70 +1,69 @@
 package com.vladislav.oauth.ui;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
-import com.vaadin.flow.server.WrappedSession;
+import com.vladislav.oauth.components.googleclient.GoogleClient;
 import com.vladislav.oauth.pojo.GoogleProfile;
-import java.io.IOException;
-import lombok.SneakyThrows;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Request.Builder;
-import okhttp3.Response;
+import com.vladislav.oauth.utils.VaadinSessionWrapper;
+import javax.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 
 @Route("home")
 @PageTitle("Home")
+@RequiredArgsConstructor
 public class HomeView extends VerticalLayout {
 
-  private final Button signIn = new Button("Sign In") {{
-    addClickListener(event -> getUI().ifPresent(ui -> ui.navigate(LoginView.class)));
-  }};
-  private final Button signOut = new Button("Sign Out") {{
-    addClickListener(event -> VaadinSession.getCurrent().getSession().invalidate());
-  }};
+  private final GoogleClient googleClient;
 
-  @SneakyThrows
-  public HomeView() {
-    final WrappedSession session = VaadinSession.getCurrent().getSession();
+  private Button signIn;
+  private Button signOut;
+  private Div welcomeText;
 
-    final String accessToken = (String) session.getAttribute("accessToken");
+  @PostConstruct
+  public void init() {
+    // init ui components
+    signIn = new Button("Sign In");
+    signOut = new Button("Sign Out");
+    welcomeText = new Div();
+
+    signIn.addClickListener(this::onSignIn);
+    signOut.addClickListener(this::onSignOut);
+
+    add(welcomeText);
+
+    final String accessToken = VaadinSessionWrapper.getAccessToken();
 
     if (accessToken == null) {
-      add(text("Welcome new user! This is a home page"), signIn);
+      anonymousHome();
     } else {
-      final String tokenType = (String) session.getAttribute("tokenType");
-      final String expiresIn = (String) session.getAttribute("expiresIn");
-
-      final GoogleProfile profile = getProfile(accessToken);
-
-      add(text(String.format("Welcome %s! This is a home page.", profile.getName())), signOut);
-      add(text("Access Token: " + accessToken));
-      add(text("Token Type: " + tokenType));
-      add(text("Expires In: " + expiresIn + " seconds"));
+      loggedHome();
     }
   }
 
-  private Div text(String text) {
-    return new Div(new Text(text));
+  private void anonymousHome() {
+    welcomeText.setText("Welcome new user! This is a home page");
+    add(signIn);
   }
 
-  private GoogleProfile getProfile(String accessToken) throws IOException {
-    final OkHttpClient client = new OkHttpClient();
-    final Request request = new Builder()
-        .url("https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" + accessToken)
-        .get()
-        .build();
+  private void loggedHome() {
+    final GoogleProfile profile = googleClient.getProfile();
 
-    Response response = client.newCall(request).execute();
+    final String message = String.format("Welcome %s! This is a home page", profile.getName());
+    welcomeText.setText(message);
 
-    final String json = response.body().string();
+    add(signOut);
+  }
 
-    final ObjectMapper objectMapper = new ObjectMapper();
-    return objectMapper.readValue(json, GoogleProfile.class);
+  private void onSignIn(ClickEvent<Button> event) {
+    getUI().ifPresent(ui -> ui.navigate(LoginView.class));
+  }
+
+  private void onSignOut(ClickEvent<Button> event) {
+    VaadinSession.getCurrent().getSession().invalidate();
   }
 }

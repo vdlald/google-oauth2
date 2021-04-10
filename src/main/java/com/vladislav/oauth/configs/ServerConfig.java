@@ -1,10 +1,8 @@
 package com.vladislav.oauth.configs;
 
 import org.apache.catalina.Context;
-import org.apache.catalina.connector.Connector;
 import org.apache.tomcat.util.descriptor.web.SecurityCollection;
 import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +13,7 @@ public class ServerConfig {
 
   @Bean
   public ServletWebServerFactory servletContainer() {
-    TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory() {
+    return new TomcatServletWebServerFactory() {
       @Override
       protected void postProcessContext(Context context) {
         SecurityConstraint securityConstraint = new SecurityConstraint();
@@ -26,6 +24,5 @@ public class ServerConfig {
         context.addConstraint(securityConstraint);
       }
     };
-    return tomcat;
   }
 }
