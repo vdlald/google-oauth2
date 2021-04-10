@@ -8,7 +8,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 import com.vladislav.oauth.components.googleclient.GoogleClient;
-import com.vladislav.oauth.pojo.GoogleProfile;
+import com.vladislav.oauth.pojo.GoogleProfileResponse;
 import com.vladislav.oauth.utils.VaadinSessionWrapper;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -51,7 +51,7 @@ public class HomeView extends VerticalLayout {
   }
 
   private void loggedHome() {
-    final GoogleProfile profile = googleClient.getProfile();
+    final GoogleProfileResponse profile = googleClient.getProfile();
 
     final String message = String.format("Welcome %s! This is a home page", profile.getName());
     welcomeText.setText(message);

@@ -3,7 +3,7 @@ package com.vladislav.oauth.components.googleclient;
 import static com.vladislav.oauth.utils.VaadinSessionWrapper.getAccessToken;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vladislav.oauth.pojo.GoogleProfile;
+import com.vladislav.oauth.pojo.GoogleProfileResponse;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import okhttp3.OkHttpClient;
@@ -23,7 +23,7 @@ public class GoogleClient {
   private final OkHttpClient client;
   private final ObjectMapper objectMapper;
 
-  public GoogleProfile getProfile() {
+  public GoogleProfileResponse getProfile() {
     final String accessToken = getAccessToken();
     final Request request = new Builder()
         .url(url + "/v1/userinfo?alt=json&access_token=" + accessToken)
@@ -35,7 +35,7 @@ public class GoogleClient {
 
       final String json = response.body().string();
 
-      return objectMapper.readValue(json, GoogleProfile.class);
+      return objectMapper.readValue(json, GoogleProfileResponse.class);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

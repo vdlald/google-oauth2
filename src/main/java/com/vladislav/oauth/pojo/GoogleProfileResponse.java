@@ -8,13 +8,13 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class GoogleProfile {
-
-  @JsonProperty("name")
-  private String name;
+public class GoogleProfileResponse {
 
   @JsonProperty("id")
   private String id;
+
+  @JsonProperty("name")
+  private String name;
 
   @JsonProperty("given_name")
   private String givenName;
