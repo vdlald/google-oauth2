@@ -28,6 +28,14 @@ public class LoginView extends VerticalLayout {
   private String clientId;
 
   private final GoogleClient googleClient;
+  private final String href = "https://accounts.google.com/o/oauth2/v2/auth"
+      + "?scope=https://www.googleapis.com/auth/userinfo.profile&"
+      + "access_type=offline&"
+      + "include_granted_scopes=true&"
+      + "response_type=code&"
+      + "redirect_uri=" + redirectUri + "&"
+      + "client_id=" + clientId;
+
 
   @PostConstruct
   public void init() {
@@ -38,17 +46,10 @@ public class LoginView extends VerticalLayout {
 
     add(new H1("Sign in"));
 
-    final String accessToken = VaadinSessionWrapper.getAccessToken();
-    if (accessToken == null) {
+    if (VaadinSessionWrapper.isAuth()) {
       final Anchor signIn = new Anchor();
       signIn.setText("Sign In via Google");
-      signIn.setHref("https://accounts.google.com/o/oauth2/v2/auth" +
-          "?scope=https://www.googleapis.com/auth/userinfo.profile&"
-          + "access_type=offline&"
-          + "include_granted_scopes=true&"
-          + "response_type=code&"
-          + "redirect_uri=" + redirectUri + "&"
-          + "client_id=" + clientId);
+      signIn.setHref(href);
 
       add(signIn);
     } else {

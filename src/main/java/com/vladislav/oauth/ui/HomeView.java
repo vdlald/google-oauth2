@@ -31,14 +31,13 @@ public class HomeView extends VerticalLayout {
     signOut = new Button("Sign Out");
     welcomeText = new Div();
 
+    // set click listeners
     signIn.addClickListener(this::onSignIn);
     signOut.addClickListener(this::onSignOut);
 
     add(welcomeText);
 
-    final String accessToken = VaadinSessionWrapper.getAccessToken();
-
-    if (accessToken == null) {
+    if (VaadinSessionWrapper.isAuth()) {
       anonymousHome();
     } else {
       loggedHome();

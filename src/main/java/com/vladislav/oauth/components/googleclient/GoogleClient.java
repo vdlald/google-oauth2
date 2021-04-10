@@ -5,10 +5,10 @@ import static com.vladislav.oauth.utils.VaadinSessionWrapper.getAccessToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vladislav.oauth.pojo.ExchangeTokenResponse;
 import com.vladislav.oauth.pojo.GoogleProfileResponse;
+import com.vladislav.oauth.utils.UtilsMethods;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -41,6 +41,7 @@ public class GoogleClient {
   private final ObjectMapper objectMapper;
 
   public ExchangeTokenResponse exchangeToken(String code) {
+    // create request
     final HashMap<String, String> params = new HashMap<>();
     params.put("code", code);
     params.put("client_id", clientId);
@@ -48,10 +49,7 @@ public class GoogleClient {
     params.put("grant_type", "authorization_code");
     params.put("redirect_uri", redirectUri);
 
-    final String requestBodyRaw = params.entrySet()
-        .stream()
-        .map(entry -> String.format("%s=%s", entry.getKey(), entry.getValue()))
-        .collect(Collectors.joining("&"));
+    final String requestBodyRaw = UtilsMethods.mapToQueryParams(params);
 
     final RequestBody requestBody = RequestBody.create(
         requestBodyRaw.getBytes(StandardCharsets.UTF_8));
@@ -62,9 +60,9 @@ public class GoogleClient {
         .post(requestBody)
         .build();
 
-    final Response response;
+    // execute request
     try {
-      response = client.newCall(request).execute();
+      final Response response = client.newCall(request).execute();
 
       final String json = response.body().string();
 
@@ -75,12 +73,14 @@ public class GoogleClient {
   }
 
   public GoogleProfileResponse getProfile() {
+    // create request
     final String accessToken = getAccessToken();
     final Request request = new Builder()
         .url(url + "/v1/userinfo?alt=json&access_token=" + accessToken)
         .get()
         .build();
 
+    // execute request
     try {
       final Response response = client.newCall(request).execute();
 
