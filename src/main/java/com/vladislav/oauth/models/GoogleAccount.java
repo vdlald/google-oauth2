@@ -1,5 +1,6 @@
 package com.vladislav.oauth.models;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import lombok.AllArgsConstructor;
@@ -14,11 +15,16 @@ import lombok.experimental.Accessors;
 @Embeddable
 public class GoogleAccount {
 
+  @Column(name = "google_id", unique = true)
   private String id;
+
+  @Column(name = "google_name")
   private String name;
+
+  @Column(name = "google_locale")
   private String locale;
 
   @Embedded
-  private Token token;
+  private GoogleToken token;
 
 }

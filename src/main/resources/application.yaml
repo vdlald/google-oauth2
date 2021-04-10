@@ -12,3 +12,4 @@ spring:
 google:
   client:
     url: "https://www.googleapis.com/oauth2"
+    token: "https://oauth2.googleapis.com/token"
