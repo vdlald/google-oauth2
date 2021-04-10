@@ -34,7 +34,7 @@ public class HomeView extends VerticalLayout {
       add(text("Welcome user! This is a home page."), signOut);
       add(text("Access Token: " + accessToken));
       add(text("Token Type: " + tokenType));
-      add(text("Expires In: " + expiresIn));
+      add(text("Expires In: " + expiresIn + " seconds"));
     }
   }
 
